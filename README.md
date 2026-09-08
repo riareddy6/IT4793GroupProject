@@ -1,7 +1,4 @@
-# IT4793GroupProject
-
-
-# Customer Campaign Acceptance Analysis
+# IT4793GroupProject: Customer Campaign Acceptance Analysis
 
 ## Overview
 
