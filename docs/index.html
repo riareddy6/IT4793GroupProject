@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Customer Campaign Acceptance Analysis project presentation for Applied Data Driven Solutions.">
+	<title>Customer Campaign Acceptance Analysis</title>
+	<style>
+		/* Design tokens keep the page easy to re-theme as the project develops. */
+		:root {
+			--ink: #10263d;
+			--ink-soft: #29435c;
+			--paper: #f5f7f4;
+			--white: #ffffff;
+			--line: #dbe4e7;
+			--muted: #6a7c88;
+			--coral: #f16f5b;
+			--coral-dark: #ca5042;
+			--teal: #2b9c97;
+			--teal-soft: #dff2ef;
+			--yellow: #f4c95d;
+			--shadow: 0 18px 44px rgba(16, 38, 61, 0.08);
+			--radius: 18px;
+		}
+
+		* { box-sizing: border-box; }
+		html { scroll-behavior: smooth; }
+		body {
+			margin: 0;
+			color: var(--ink);
+			background: var(--paper);
+			font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+			line-height: 1.6;
+		}
+		a { color: inherit; text-decoration: none; }
+		.container { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+		.eyebrow {
+			color: var(--coral-dark);
+			font-size: .76rem;
+			font-weight: 800;
+			letter-spacing: .14em;
+			text-transform: uppercase;
+		}
+		h1, h2, h3, p { margin-top: 0; }
+		h1, h2, h3 { line-height: 1.12; letter-spacing: -.035em; }
+		h2 { font-size: clamp(2rem, 4vw, 3.35rem); margin-bottom: 16px; }
+		h3 { font-size: 1.22rem; margin-bottom: 10px; }
+		.section { padding: 104px 0; }
+		.section-heading { max-width: 650px; margin-bottom: 42px; }
+		.section-heading p, .muted { color: var(--muted); }
+
+		/* Header and mobile navigation. */
+		.site-header {
+			position: sticky;
+			top: 0;
+			z-index: 10;
+			background: rgba(16, 38, 61, .96);
+			color: var(--white);
+			border-bottom: 1px solid rgba(255,255,255,.12);
+		}
+		.nav-wrap { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+		.brand { display: flex; align-items: center; gap: 12px; font-size: .98rem; font-weight: 800; }
+		.brand-mark { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: var(--coral); color: var(--ink); font-weight: 900; }
+		.nav-toggle { display: none; border: 1px solid rgba(255,255,255,.25); background: transparent; color: white; border-radius: 8px; padding: 8px 10px; cursor: pointer; font-size: 1.2rem; }
+		.nav-links { display: flex; align-items: center; gap: 21px; font-size: .83rem; }
+		.nav-links a { color: #d8e3e8; transition: color .2s ease; }
+		.nav-links a:hover, .nav-links a:focus { color: var(--yellow); }
+
+		/* Hero uses a grid motif to suggest analysis without requiring external assets. */
+		.hero { position: relative; overflow: hidden; padding: 108px 0 118px; background: var(--ink); color: var(--white); }
+		.hero::after { content: ""; position: absolute; width: 420px; height: 420px; right: -110px; top: -170px; border: 1px solid rgba(244,201,93,.3); border-radius: 50%; box-shadow: 0 0 0 34px rgba(244,201,93,.06), 0 0 0 70px rgba(244,201,93,.04); }
+		.hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1.1fr .9fr; gap: 72px; align-items: center; }
+		.hero h1 { max-width: 720px; margin: 16px 0 24px; font-size: clamp(3rem, 7vw, 6.8rem); }
+		.hero .eyebrow { color: var(--yellow); }
+		.hero-copy { max-width: 620px; color: #c9d6dc; font-size: 1.12rem; }
+		.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+		.button { display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 0 19px; border: 1px solid transparent; border-radius: 9px; font-weight: 800; font-size: .9rem; cursor: pointer; transition: transform .2s ease, background .2s ease; }
+		.button:hover { transform: translateY(-2px); }
+		.button-primary { background: var(--coral); color: var(--ink); }
+		.button-secondary { border-color: rgba(255,255,255,.35); color: white; }
+		.hero-visual { min-height: 310px; position: relative; border: 1px solid rgba(255,255,255,.18); border-radius: 20px; padding: 28px; background: rgba(255,255,255,.06); }
+		.visual-label { color: #b4c4ca; font-size: .76rem; letter-spacing: .1em; text-transform: uppercase; }
+		.chart-bars { height: 190px; display: flex; align-items: end; gap: 13px; margin-top: 22px; border-bottom: 1px solid rgba(255,255,255,.22); }
+		.chart-bars span { flex: 1; min-height: 28px; border-radius: 6px 6px 0 0; background: var(--teal); }
+		.chart-bars span:nth-child(2), .chart-bars span:nth-child(5) { background: var(--yellow); }
+		.chart-bars span:nth-child(3), .chart-bars span:nth-child(6) { background: var(--coral); }
+		.visual-note { display: flex; justify-content: space-between; margin-top: 14px; color: #b4c4ca; font-size: .8rem; }
+
+		.overview { background: var(--white); }
+		.overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
+		.overview-callout { border-left: 4px solid var(--coral); padding: 22px 0 22px 26px; font-size: 1.3rem; font-weight: 700; }
+		.process-list { display: grid; gap: 14px; }
+		.process-item { display: grid; grid-template-columns: 42px 1fr; gap: 14px; align-items: start; padding: 20px; border: 1px solid var(--line); border-radius: 12px; }
+		.process-number { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--teal-soft); color: var(--teal); font-weight: 900; }
+
+		.cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+		.stat-card, .model-card, .insight-card { padding: 24px; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+		.stat-card { min-height: 155px; }
+		.stat-value { display: block; margin: 18px 0 3px; color: var(--ink); font-size: 2rem; font-weight: 900; }
+		.stat-label { color: var(--muted); font-size: .9rem; }
+		.dataset-note { margin-top: 24px; color: var(--muted); font-size: .92rem; }
+
+		.analysis-section { background: #eaf2f1; }
+		.visual-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+		.visual-card { min-height: 230px; padding: 22px; background: rgba(255,255,255,.8); border: 1px solid rgba(43,156,151,.22); border-radius: var(--radius); }
+		.placeholder { display: grid; place-items: center; min-height: 118px; margin-top: 18px; border: 1px dashed #99beb9; border-radius: 10px; color: var(--teal); background: rgba(223,242,239,.65); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-align: center; text-transform: uppercase; }
+		.modeling { background: var(--white); }
+		.model-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+		.model-card { position: relative; box-shadow: none; }
+		.model-card::before { content: ""; display: block; width: 42px; height: 4px; margin-bottom: 25px; border-radius: 4px; background: var(--coral); }
+		.model-card:nth-child(2)::before { background: var(--yellow); }
+		.model-card:nth-child(3)::before { background: var(--teal); }
+		.model-card p { color: var(--muted); font-size: .92rem; }
+		.tag { display: inline-block; padding: 4px 9px; border-radius: 99px; background: #f3f5f4; color: var(--muted); font-size: .72rem; font-weight: 800; }
+		.evaluation { margin-top: 52px; padding: 28px; border-radius: var(--radius); background: var(--ink); color: white; }
+		.evaluation h3 { color: white; }
+		.metric-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 20px; }
+		.metric { padding: 15px; border: 1px solid rgba(255,255,255,.15); border-radius: 10px; color: #c9d6dc; font-size: .85rem; }
+		.metric strong { display: block; margin-top: 7px; color: var(--yellow); font-size: .86rem; }
+
+		.results-layout { display: grid; grid-template-columns: 1.1fr .9fr; gap: 18px; }
+		.result-panel { min-height: 210px; padding: 26px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--white); }
+		.result-panel.wide { grid-column: span 2; }
+		.result-panel p { color: var(--muted); }
+		.insights { background: var(--yellow); }
+		.insight-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+		.insight-card { box-shadow: none; border: 0; }
+		.insight-card p { color: var(--ink-soft); font-size: .9rem; }
+		.team { background: var(--white); }
+		.team-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+		.member { padding: 22px 18px; border-top: 4px solid var(--teal); background: var(--paper); border-radius: 10px; }
+		.member:nth-child(2n) { border-color: var(--coral); }
+		.member-initial { display: grid; place-items: center; width: 44px; height: 44px; margin-bottom: 20px; border-radius: 50%; background: var(--ink); color: var(--yellow); font-weight: 900; }
+		.member h3 { font-size: 1rem; }
+		.member p { margin-bottom: 0; color: var(--muted); font-size: .82rem; }
+		footer { padding: 46px 0; background: var(--ink); color: white; }
+		.footer-grid { display: flex; justify-content: space-between; gap: 30px; align-items: end; }
+		footer p { margin-bottom: 0; color: #b6c7ce; font-size: .9rem; }
+		.repo-link { color: var(--yellow); font-weight: 800; }
+
+		@media (max-width: 900px) {
+			.hero-grid, .overview-grid, .results-layout { grid-template-columns: 1fr; gap: 38px; }
+			.hero { padding: 80px 0 90px; }
+			.hero h1 { font-size: clamp(3rem, 12vw, 5rem); }
+			.cards-grid { grid-template-columns: repeat(2, 1fr); }
+			.visual-grid, .model-grid { grid-template-columns: repeat(2, 1fr); }
+			.insight-grid { grid-template-columns: repeat(2, 1fr); }
+			.team-grid { grid-template-columns: repeat(3, 1fr); }
+			.result-panel.wide { grid-column: auto; }
+		}
+		@media (max-width: 680px) {
+			.container { width: min(100% - 28px, 540px); }
+			.section { padding: 74px 0; }
+			.nav-toggle { display: block; }
+			.nav-links { display: none; position: absolute; left: 14px; right: 14px; top: 66px; flex-direction: column; align-items: stretch; gap: 0; padding: 8px; background: var(--ink); border: 1px solid rgba(255,255,255,.15); border-radius: 10px; box-shadow: var(--shadow); }
+			.nav-links.is-open { display: flex; }
+			.nav-links a { padding: 12px; }
+			.hero-visual { min-height: 250px; }
+			.chart-bars { height: 140px; }
+			.cards-grid, .visual-grid, .model-grid, .insight-grid, .team-grid, .metric-grid { grid-template-columns: 1fr; }
+			.footer-grid { display: block; }
+			.footer-grid > div + div { margin-top: 22px; }
+		}
+	</style>
+</head>
+<body>
+	<!-- Site-wide navigation links to each project presentation section. -->
+	<header class="site-header">
+		<div class="container nav-wrap">
+			<a class="brand" href="#home" aria-label="Go to project home"><span class="brand-mark">CA</span><span>Campaign Acceptance<br>Analysis</span></a>
+			<button class="nav-toggle" type="button" aria-controls="main-navigation" aria-expanded="false" aria-label="Open navigation">&#9776;</button>
+			<nav id="main-navigation" class="nav-links" aria-label="Main navigation">
+				<a href="#home">Home</a><a href="#overview">Overview</a><a href="#dataset">Dataset</a><a href="#analysis">Analysis</a><a href="#modeling">Modeling</a><a href="#results">Results</a><a href="#insights">Insights</a><a href="#team">Team</a>
+			</nav>
+		</div>
+	</header>
+
+	<main>
+		<!-- Hero section introduces the project and provides the primary calls to action. -->
+		<section id="home" class="hero">
+			<div class="container hero-grid">
+				<div>
+					<div class="eyebrow">Applied Data Driven Solutions · Project 01</div>
+					<h1>Customer Campaign Acceptance Analysis</h1>
+					<p class="hero-copy">Using customer data and predictive analytics to help businesses identify the people most likely to accept a marketing offer.</p>
+					<div class="actions"><a class="button button-primary" href="#overview">View Project <span aria-hidden="true">&nbsp;→</span></a><a class="button button-secondary" href="#results">Explore Results <span aria-hidden="true">&nbsp;→</span></a></div>
+				</div>
+				<div class="hero-visual" aria-label="Decorative placeholder for future acceptance analysis chart">
+					<div class="visual-label">Acceptance signals / exploratory view</div>
+					<div class="chart-bars"><span style="height: 38%"></span><span style="height: 62%"></span><span style="height: 47%"></span><span style="height: 76%"></span><span style="height: 56%"></span><span style="height: 88%"></span><span style="height: 68%"></span></div>
+					<div class="visual-note"><span>Placeholder visual</span><span>Analysis pending</span></div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Project overview explains the business problem and analytical approach. -->
+		<section id="overview" class="section overview">
+			<div class="container overview-grid">
+				<div><div class="eyebrow">01 / The opportunity</div><h2>Better targeting starts with better customer understanding.</h2><p class="muted">When businesses run a marketing campaign, they do not always know which customers are most likely to accept an offer. This project turns customer history into a clearer starting point for campaign decisions.</p><div class="overview-callout">The goal: understand campaign acceptance before the next offer is sent.</div></div>
+				<div class="process-list"><div class="process-item"><span class="process-number">1</span><div><h3>Understand the customer</h3><p class="muted">Examine demographic information, purchasing behavior, spending patterns, and previous campaign responses.</p></div></div><div class="process-item"><span class="process-number">2</span><div><h3>Combine two analytical lenses</h3><p class="muted">Use descriptive analytics to find patterns and predictive analytics to estimate campaign acceptance.</p></div></div><div class="process-item"><span class="process-number">3</span><div><h3>Support campaign decisions</h3><p class="muted">Translate model findings into more focused customer targeting and resource allocation.</p></div></div></div>
+			</div>
+		</section>
+
+		<!-- Dataset summary cards use clearly marked placeholders until the final data is prepared. -->
+		<section id="dataset" class="section">
+			<div class="container"><div class="section-heading"><div class="eyebrow">02 / Dataset</div><h2>Customer Personality Analysis</h2><p>The project uses the Kaggle Customer Personality Analysis dataset to study customer profiles, spending, purchasing channels, and campaign responses.</p></div><div class="cards-grid"><article class="stat-card"><span class="eyebrow">Dataset size</span><strong class="stat-value">TBD</strong><span class="stat-label">Number of Customers · Placeholder</span></article><article class="stat-card"><span class="eyebrow">Feature space</span><strong class="stat-value">TBD</strong><span class="stat-label">Number of Variables · Placeholder</span></article><article class="stat-card"><span class="eyebrow">Outcome</span><strong class="stat-value">Response</strong><span class="stat-label">Binary classification target</span></article><article class="stat-card"><span class="eyebrow">Approach</span><strong class="stat-value">2 lenses</strong><span class="stat-label">Descriptive + Predictive Analytics</span></article></div><p class="dataset-note"><strong>Response definition:</strong> 1 indicates that a customer accepted the most recent campaign; 0 indicates that a customer did not accept it. Dataset summary values will be updated after final data preparation.</p></div>
+		</section>
+
+		<!-- Analysis cards reserve named spaces for visualizations that will be created later. -->
+		<section id="analysis" class="section analysis-section">
+			<div class="container"><div class="section-heading"><div class="eyebrow">03 / Exploratory data analysis</div><h2>Find the signals behind the response.</h2><p>These visual spaces will help the team compare customer characteristics and identify patterns worth carrying into modeling.</p></div><div class="visual-grid"><article class="visual-card"><h3>Income Distribution</h3><div class="placeholder">Future chart placeholder</div></article><article class="visual-card"><h3>Customer Spending</h3><div class="placeholder">Future chart placeholder</div></article><article class="visual-card"><h3>Campaign Acceptance Rate</h3><div class="placeholder">Future chart placeholder</div></article><article class="visual-card"><h3>Purchase Channels</h3><div class="placeholder">Future chart placeholder</div></article><article class="visual-card"><h3>Customer Demographics</h3><div class="placeholder">Future chart placeholder</div></article><article class="visual-card"><h3>Previous Campaign Responses</h3><div class="placeholder">Future chart placeholder</div></article></div></div>
+		</section>
+
+		<!-- Modeling section presents the planned classifiers and evaluation framework. -->
+		<section id="modeling" class="section modeling">
+			<div class="container"><div class="section-heading"><div class="eyebrow">04 / Predictive modeling</div><h2>Compare models with purpose.</h2><p>We plan to compare interpretable and ensemble classification approaches before selecting a model for campaign acceptance prediction.</p></div><div class="model-grid"><article class="model-card"><span class="tag">Baseline</span><h3>Logistic Regression</h3><p>A clear baseline for estimating how customer variables relate to the probability of campaign acceptance.</p></article><article class="model-card"><span class="tag">Interpretable</span><h3>Decision Tree</h3><p>A rule-based model that can reveal straightforward segments and decision paths.</p></article><article class="model-card"><span class="tag">Ensemble</span><h3>Random Forest</h3><p>A collection of decision trees designed to capture richer relationships across customer features.</p></article></div><div class="evaluation"><h3>Model Evaluation</h3><p class="muted">Metrics will be populated after training and validation. No experimental results are presented yet.</p><div class="metric-grid"><div class="metric">Precision<strong>Pending Analysis</strong></div><div class="metric">Recall<strong>Pending Analysis</strong></div><div class="metric">F1 Score<strong>Pending Analysis</strong></div><div class="metric">ROC AUC<strong>Pending Analysis</strong></div><div class="metric">Confusion Matrix<strong>To Be Updated</strong></div></div></div></div>
+		</section>
+
+		<!-- Results are intentionally framed as future outputs so no findings are implied. -->
+		<section id="results" class="section">
+			<div class="container"><div class="section-heading"><div class="eyebrow">05 / Results</div><h2>A clear place for the evidence.</h2><p>This section will hold the final findings after analysis, training, and evaluation are complete.</p></div><div class="results-layout"><article class="result-panel"><h3>Model Comparison</h3><p>Placeholder for a side-by-side comparison of evaluation metrics.</p><div class="placeholder">Results pending</div></article><article class="result-panel"><h3>Best Performing Model</h3><p>The selected model will be documented here after validation.</p><div class="placeholder">To be updated</div></article><article class="result-panel"><h3>Feature Importance</h3><p>Placeholder for the variables that contribute most to model predictions.</p><div class="placeholder">Future visual</div></article><article class="result-panel"><h3>Confusion Matrix</h3><p>Placeholder for classification error analysis.</p><div class="placeholder">Future visual</div></article><article class="result-panel wide"><h3>ROC Curve &amp; Campaign Acceptance Prediction Results</h3><p>Future space for the ROC curve and a transparent summary of customer-level prediction results.</p><div class="placeholder">Future result presentation area</div></article></div></div>
+		</section>
+
+		<!-- Business insight cards define the questions the final analysis should answer. -->
+		<section id="insights" class="section insights">
+			<div class="container"><div class="section-heading"><div class="eyebrow">06 / Business insights</div><h2>Turn patterns into action.</h2><p>These prompts will guide the final interpretation without assuming findings before the data is analyzed.</p></div><div class="insight-grid"><article class="insight-card"><h3>Customer characteristics</h3><p>Which demographic and household characteristics appear most related to campaign acceptance?</p></article><article class="insight-card"><h3>Purchasing behavior</h3><p>Which spending habits and purchase channels may influence a customer response?</p></article><article class="insight-card"><h3>Priority segments</h3><p>Which customer groups could a business consider targeting first?</p></article><article class="insight-card"><h3>Resource efficiency</h3><p>How might a focused campaign reduce unnecessary marketing resources?</p></article></div></div>
+		</section>
+
+		<!-- Team information is kept editable so real names can replace placeholders later. -->
+		<section id="team" class="section team">
+			<div class="container"><div class="section-heading"><div class="eyebrow">07 / The team</div><h2>Five perspectives, one analysis.</h2><p>Project responsibilities are distributed across coordination, data preparation, modeling, and communication.</p></div><div class="team-grid"><article class="member"><div class="member-initial">C</div><h3>Calvin</h3><p>Team Lead and Project Coordination</p></article><article class="member"><div class="member-initial">M</div><h3>Mei</h3><p>Documentation and Report Editing</p></article><article class="member"><div class="member-initial">3</div><h3>Team Member 3</h3><p>Data Preparation and Exploratory Analysis</p></article><article class="member"><div class="member-initial">4</div><h3>Team Member 4</h3><p>Predictive Modeling and Evaluation</p></article><article class="member"><div class="member-initial">5</div><h3>Team Member 5</h3><p>Business Insights and Presentation</p></article></div></div>
+		</section>
+	</main>
+
+	<!-- Footer includes a future repository destination without inventing a URL. -->
+	<footer>
+		<div class="container footer-grid"><div><div class="brand"><span class="brand-mark">CA</span><span>Customer Campaign Acceptance Analysis</span></div><p>Applied Data Driven Solutions · Kennesaw State University</p></div><div><p>Project repository</p><a class="repo-link" href="#" aria-label="GitHub repository link placeholder">GitHub Repository →</a></div></div>
+	</footer>
+
+	<script>
+		// Toggle the compact navigation menu on small screens.
+		const navToggle = document.querySelector('.nav-toggle');
+		const navigation = document.querySelector('#main-navigation');
+		navToggle.addEventListener('click', () => {
+			const isOpen = navigation.classList.toggle('is-open');
+			navToggle.setAttribute('aria-expanded', String(isOpen));
+			navToggle.setAttribute('aria-label', isOpen ? 'Close navigation' : 'Open navigation');
+		});
+
+		// Close the mobile menu after a section link is selected.
+		navigation.querySelectorAll('a').forEach((link) => {
+			link.addEventListener('click', () => {
+				navigation.classList.remove('is-open');
+				navToggle.setAttribute('aria-expanded', 'false');
+				navToggle.setAttribute('aria-label', 'Open navigation');
+			});
+		});
+	</script>
+</body>
+</html>
