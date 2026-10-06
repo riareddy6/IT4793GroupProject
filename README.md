@@ -4,7 +4,7 @@
 
 This project analyzes customer demographic, purchasing, and previous campaign data to better understand which customers are more likely to accept a marketing offer. The goal is to use data analysis and predictive modeling to classify customers as likely or unlikely to respond to a future marketing campaign.
 
-This project was developed for **IT 4791 – Applied Data Driven Solutions** at Kennesaw State University.
+This project is for **IT 4791 - Applied Data Driven Solutions**
 
 ## Project Objectives
 
