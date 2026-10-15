@@ -16,7 +16,7 @@ import pandas as pd
 import seaborn as sns
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 RAW_DATA_PATH = PROJECT_ROOT / "data" / "marketing_campaign.csv"
 OUTPUT_ROOT = Path(__file__).resolve().parent
 PROCESSED_DIR = OUTPUT_ROOT / "processed_data"
@@ -305,9 +305,9 @@ def create_summary(inspection: dict, audit: dict, data: pd.DataFrame, charts: li
 
 ## EDA Completed
 
-- Descriptive statistics: `reports/descriptive_statistics.csv`
-- Correlation matrix: `reports/correlation_matrix.csv`
-- Supporting relationship chart: `acceptance_rate_by_past_campaign_responses.png`
+- Descriptive statistics: `descriptive_statistics.csv`
+- Correlation matrix: `correlation_matrix.csv`
+- Supporting relationship chart: `../visualizations/acceptance_rate_by_past_campaign_responses.png`
 
 ### Milestone 1 Presentation Visualizations
 
@@ -323,7 +323,7 @@ def create_summary(inspection: dict, audit: dict, data: pd.DataFrame, charts: li
 - `customer_age_by_campaign_acceptance.png`
 - `acceptance_rate_by_past_campaign_responses.png`
 
-All charts are PNG files saved at 300 DPI under `docs/visualizations`.
+All charts are PNG files saved at 300 DPI under `docs/milestone1/visualizations`.
 
 ## Preliminary Findings
 
@@ -331,7 +331,7 @@ All charts are PNG files saved at 300 DPI under `docs/visualizations`.
 
 ## Data Readiness Status
 
-**READY FOR ANALYSIS.** The processed dataset was exported to `processed_data/marketing_campaign_processed.csv`. The raw data was successfully read, documented cleaning was completed, required features were created, `Response` is complete, EDA ran successfully, and presentation-ready visualizations were generated. No classification, clustering, or other Milestone 2 modeling was performed.
+**READY FOR ANALYSIS.** The processed dataset was exported to `../processed_data/marketing_campaign_processed.csv`. The raw data was successfully read, documented cleaning was completed, required features were created, `Response` is complete, EDA ran successfully, and presentation-ready visualizations were generated. No classification, clustering, or other Milestone 2 modeling was performed.
 """
     (REPORT_DIR / "milestone1_summary.md").write_text(summary, encoding="utf-8")
 

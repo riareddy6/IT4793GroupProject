@@ -1,0 +1,30 @@
+Traceback (most recent call last):
+  File "C:\Users\mei\OneDrive\KSU\KSU Fall 2026\IT4793 Applied Data Driven Solution\IT4793GroupProject\experiments\common\evaluation.py", line 40, in run_classifier
+    data, audit = load_data(config)
+                  ~~~~~~~~~^^^^^^^^
+  File "C:\Users\mei\OneDrive\KSU\KSU Fall 2026\IT4793 Applied Data Driven Solution\IT4793GroupProject\experiments\common\data_loader.py", line 15, in load_data
+    data = pd.read_csv(config['dataset'])
+  File "C:\Users\mei\OneDrive\KSU\KSU Fall 2026\IT4793 Applied Data Driven Solution\IT4793GroupProject\.experiment_dependencies\pandas\io\parsers\readers.py", line 872, in read_csv
+    return _read(filepath_or_buffer, kwds)
+  File "C:\Users\mei\OneDrive\KSU\KSU Fall 2026\IT4793 Applied Data Driven Solution\IT4793GroupProject\.experiment_dependencies\pandas\io\parsers\readers.py", line 300, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+  File "C:\Users\mei\OneDrive\KSU\KSU Fall 2026\IT4793 Applied Data Driven Solution\IT4793GroupProject\.experiment_dependencies\pandas\io\parsers\readers.py", line 1643, in __init__
+    self._engine = self._make_engine(f, self.engine)
+                   ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\mei\OneDrive\KSU\KSU Fall 2026\IT4793 Applied Data Driven Solution\IT4793GroupProject\.experiment_dependencies\pandas\io\parsers\readers.py", line 1907, in _make_engine
+    self.handles = get_handle(
+                   ~~~~~~~~~~^
+        f,
+        ^^
+    ...<6 lines>...
+        storage_options=self.options.get("storage_options", None),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\mei\OneDrive\KSU\KSU Fall 2026\IT4793 Applied Data Driven Solution\IT4793GroupProject\.experiment_dependencies\pandas\io\common.py", line 930, in get_handle
+    handle = open(
+        handle,
+    ...<3 lines>...
+        newline="",
+    )
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\mei\\OneDrive\\KSU\\KSU Fall 2026\\IT4793 Applied Data Driven Solution\\docs\\milestone1\\processed_data\\marketing_campaign_processed.csv'

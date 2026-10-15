@@ -1,0 +1,20 @@
+{
+  "dataset": "docs/milestone1/processed_data/marketing_campaign_processed.csv",
+  "raw_dataset": "data/marketing_campaign.csv",
+  "target": "Response",
+  "random_state": 42,
+  "test_size": 0.2,
+  "cv_folds": 5,
+  "primary_metric": "f1",
+  "positive_class": 1,
+  "default_threshold": 0.5,
+  "reference_date": "2014-12-31",
+  "model": "decision_tree",
+  "parameters": {
+    "max_depth": 5,
+    "min_samples_leaf": 10,
+    "class_weight": "balanced",
+    "random_state": 42
+  },
+  "scale_numeric": false
+}

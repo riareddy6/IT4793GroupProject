@@ -1,0 +1,6 @@
+{
+  "k": 2,
+  "method": "highest silhouette subject to every cluster >= 5% of customers; ties favor lower k",
+  "interpretability": "Inspect original-unit profiles for spending, purchasing, household and income patterns; clusters are descriptive, not causal.",
+  "response_used_for_selection": false
+}
