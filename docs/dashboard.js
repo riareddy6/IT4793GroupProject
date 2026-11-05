@@ -20,7 +20,9 @@ function showThreshold() {
   const model = evidence.models[byId('model').value];
   const row = model.threshold_grid[Number(byId('threshold').value)];
   byId('threshold-value').textContent = row.threshold.toFixed(2);
-  byId('threshold-result').textContent = `Training OOF development: precision ${percent(row.precision)} · recall ${percent(row.recall)} · F1 ${fixed(row.f1)}. Frozen selected threshold: ${model.threshold.toFixed(2)}.`;
+  byId('threshold-result').textContent = `Precision ${percent(row.precision)}  ·  Recall ${percent(row.recall)}  ·  F1 ${fixed(row.f1)}`;
+  byId('selected-threshold').textContent = `Selected threshold: ${model.threshold.toFixed(2)}`;
+  byId('threshold').setAttribute('aria-valuetext', `${row.threshold.toFixed(2)} probability cutoff; training OOF F1 ${fixed(row.f1)}`);
 }
 /** Change model-specific figures and reset the OOF slider to its selected value. */
 function showModel() {
@@ -44,23 +46,22 @@ function render(data) {
     const card=document.createElement('div'); card.className='card'; const strong=document.createElement('strong'); strong.textContent=value; card.append(label,strong); byId('overview-cards').append(card);
   });
   const best=data.comparison.find(row=>row.model===data.best_test_f1), cv=data.comparison.find(row=>row.model===data.best_cv_f1);
-  byId('design').textContent=`${o.train_rows} training customers · ${o.test_rows} held-out customers · ${o.cv_folds}-fold stratified CV · seed 42. Test response prevalence: ${percent(o.test_prevalence)}.`;
-  byId('winner').textContent=`${best.label} has the highest observed test F1 (${fixed(best.test_f1)}). ${cv.label} remains the training-CV benchmark (${fixed(cv.cv_f1)}). Small differences do not establish a statistically reliable winner.`;
+  byId('design').textContent=`${o.train_rows.toLocaleString()} train · ${o.test_rows} test · ${o.cv_folds}-fold CV`;
+  byId('winner').textContent=`Highest test F1: ${best.label} ${fixed(best.test_f1)}  ·  Highest CV F1: ${cv.label} ${fixed(cv.cv_f1)}`;
   populateTable('comparison',data.comparison.map(row=>[row.label,row.threshold.toFixed(2),`${fixed(row.cv_f1)} ± ${fixed(row.cv_f1_sd)}`,...['test_accuracy','test_precision','test_recall','test_f1','test_roc_auc','test_average_precision'].map(key=>fixed(row[key]))]),data.comparison.findIndex(row=>row.model===data.best_test_f1));
   data.comparison.forEach(row=>{const option=document.createElement('option');option.value=row.model;option.textContent=row.label;byId('model').append(option);});
   byId('model').value=data.best_test_f1;
   const clusters=data.clusters;
-  byId('cluster-design').textContent=`K=${clusters.k}, silhouette ${fixed(clusters.silhouette)}. Selected from K=2–8 by highest silhouette with every cluster ≥5%. All ${o.rows} customers included.`;
+  byId('cluster-design').textContent=`${clusters.k} clusters · Silhouette ${fixed(clusters.silhouette)}`;
   populateTable('profiles',clusters.profiles.map(row=>[`Cluster ${row.cluster}`,row.size,percent(row.share),Math.round(row.Income).toLocaleString(),row.Total_Spending.toFixed(1),row.NumWebPurchases.toFixed(2),row.NumStorePurchases.toFixed(2),row.Kidhome.toFixed(2),`${percent(row.response_rate)} (${row.responders}/${row.size})`]));
   const ordered=[...clusters.profiles].sort((a,b)=>a.Total_Spending-b.Total_Spending),low=ordered[0],high=ordered[ordered.length-1];
   const suggestions=[
-    ['Test offers with the higher-spending group',`Cluster ${high.cluster} averages ${high.Total_Spending.toFixed(0)} in total spending with ${percent(high.response_rate)} response, versus ${percent(low.response_rate)} in Cluster ${low.cluster}. Test complementary or premium offers with randomized controls; improvement is a hypothesis.`],
-    ['Match outreach to capacity',`${best.label} achieves ${percent(best.test_precision)} precision at its frozen threshold. Limited capacity can motivate a precision-oriented development threshold; broader outreach may favor recall. Costs and benefits are unmeasured.`],
-    ['Check recency and historical engagement','Recency, tenure and campaign history appear in model interpretation. Investigate these signals only after confirming pre-offer availability. Importance does not establish cause or a universal cutoff.'],
-    ['Protect the next evaluation','Keep this holdout as historical evidence. Further tuning should use training-only or nested CV and fresh outcomes. Review segment stability before assigning budgets; measure incremental response with randomized campaigns.']];
+    ['Test offers by segment',`Observed response: ${percent(high.response_rate)} in Cluster ${high.cluster}; ${percent(low.response_rate)} in Cluster ${low.cluster}.`],
+    ['Match outreach to capacity',`${best.label}: ${percent(best.test_precision)} precision at the selected threshold.`],
+    ['Use engagement signals','Prioritize recency, tenure and campaign history in follow-up analyses.'],
+    ['Validate with new campaigns','Test segment-specific offers with randomized controls and fresh outcomes.']];
   suggestions.forEach(([title,text])=>{const article=document.createElement('article'),h=document.createElement('h3'),p=document.createElement('p');h.textContent=title;p.textContent=text;article.append(h,p);byId('business').append(article);});
-  byId('provenance').textContent=`Pinned experiments: October 13, 2026. Shared split: ${data.split_id}. Metrics derive from saved predictions and verified fitted artifacts.`;
-  byId('evidence').hidden=false;byId('status').textContent='Verified saved experiments · no simulated metrics';showModel();
+  byId('evidence').hidden=false;byId('status').className='sr-only';byId('status').textContent='Results loaded';showModel();
 }
 /** Load generated data and show recovery steps for missing or invalid artifacts. */
 async function load() {
@@ -70,5 +71,33 @@ async function load() {
 byId('nav-toggle').addEventListener('click',()=>{const open=byId('navigation').classList.toggle('open');byId('nav-toggle').setAttribute('aria-expanded',String(open));});
 document.querySelectorAll('#navigation a').forEach(link=>link.addEventListener('click',()=>{byId('navigation').classList.remove('open');byId('nav-toggle').setAttribute('aria-expanded','false');}));
 byId('model').addEventListener('change',showModel);byId('threshold').addEventListener('input',showThreshold);
+/** Information tips support hover, keyboard focus, touch pinning and Escape dismissal. */
+document.querySelectorAll('.info button').forEach(button=>{
+  const info=button.parentElement;
+  const close=()=>{info.removeAttribute('data-open');button.setAttribute('aria-expanded','false');};
+  button.addEventListener('click',()=>{
+    info.removeAttribute('data-dismissed');
+    const open=!info.hasAttribute('data-open');
+    document.querySelectorAll('.info[data-open]').forEach(other=>{
+      other.removeAttribute('data-open');other.querySelector('button').setAttribute('aria-expanded','false');
+    });
+    if(open){info.setAttribute('data-open','');button.setAttribute('aria-expanded','true');}
+    else{close();info.setAttribute('data-dismissed','');}
+  });
+  button.addEventListener('focus',()=>info.removeAttribute('data-dismissed'));
+  info.addEventListener('pointerenter',()=>info.removeAttribute('data-dismissed'));
+  info.addEventListener('focusout',event=>{if(!info.contains(event.relatedTarget))close();});
+});
+document.addEventListener('keydown',event=>{
+  if(event.key==='Escape')document.querySelectorAll('.info').forEach(info=>{
+    info.removeAttribute('data-open');info.setAttribute('data-dismissed','');
+    info.querySelector('button').setAttribute('aria-expanded','false');
+  });
+});
+document.addEventListener('click',event=>{
+  if(!event.target.closest('.info'))document.querySelectorAll('.info[data-open]').forEach(info=>{
+    info.removeAttribute('data-open');info.setAttribute('data-dismissed','');info.querySelector('button').setAttribute('aria-expanded','false');
+  });
+});
 document.querySelectorAll('img').forEach(img=>img.addEventListener('error',()=>{const warning=document.createElement('p');warning.textContent=`Figure unavailable: ${img.getAttribute('src')}. Regenerate report assets.`;img.replaceWith(warning);}));
 load();

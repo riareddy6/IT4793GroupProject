@@ -1,13 +1,84 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Verified marketing response prediction and customer segmentation: IT4793 Milestone 3."><title>Customer Campaign Analysis · Milestone 3</title><link rel="stylesheet" href="dashboard.css"><script src="dashboard.js" defer></script></head>
-<body><header><a class="brand" href="#overview"><span class="mark">CA</span> Customer Campaign Analysis</a><button id="nav-toggle" aria-expanded="false" aria-controls="navigation">Menu</button><nav id="navigation" aria-label="Main navigation"><a href="#overview">Overview</a><a href="#evaluation">Evaluation</a><a href="#explore">Explore a model</a><a href="#segments">Segments</a><a href="#insights">Decisions</a><a href="#team">Team</a></nav></header>
-<main><section class="hero" id="overview"><div class="container"><p class="eyebrow">IT4793 / Milestone 3 / Verified experiment evidence</p><h1>Understand customers.<br>Make better targeting decisions.</h1><p class="intro">Predict acceptance of a marketing offer and describe customer groups through purchasing behavior. Positive-class F1 is our primary model evaluation KPI.</p><div id="status" role="status" aria-live="polite">Loading verified experiment results…</div><div id="overview-cards" class="cards"></div><p class="fine">Response = 1: accepted the current campaign. Response = 0: did not accept. Historical findings require validation before future campaign use.</p></div></section>
-<div id="evidence" hidden>
-<section id="evaluation" class="container section"><p class="eyebrow">01 / Compare the evidence</p><h2>Four models, one shared holdout.</h2><p id="design"></p><p id="winner" class="callout"></p><p>CV F1 uses threshold 0.50. Test accuracy, precision, recall and F1 use frozen training-OOF-selected thresholds. ROC AUC and Average Precision (AP) use probabilities. AP is recall-weighted precision, not trapezoidal PR AUC.</p>
-<div class="table-scroll"><table id="comparison"><caption>Verified comparison · scores range from 0 to 1</caption><thead><tr><th>Model</th><th>Threshold</th><th>CV F1 ± SD</th><th>Test accuracy</th><th>Precision</th><th>Recall</th><th>Test F1</th><th>ROC AUC</th><th>AP</th></tr></thead><tbody></tbody></table></div><p class="fine">Precision: responders among contacts. Recall: responders reached out of all actual responders. F1 balances both. SD describes fold variation, not a confidence interval. Majority-only accuracy is about 85%, with positive F1 = 0.</p><a class="button" href="milestone3/model_comparison.csv" download>Download comparison CSV</a>
-<div class="chart-grid"><figure><img src="milestone3/roc_comparison.png" alt="Combined ROC curves with AUC legends and random-ranking diagonal" loading="lazy"><figcaption>ROC: reaching responders versus false positives.</figcaption></figure><figure><img src="milestone3/pr_comparison.png" alt="Combined precision recall curves with AP legends and prevalence baseline" loading="lazy"><figcaption>PR: precision as more responders are retrieved.</figcaption></figure></div><figure class="single"><img src="milestone3/f1_comparison.png" alt="Test F1 comparison highlighting the highest observed score" loading="lazy"></figure></section>
-<section id="explore" class="tint"><div class="container section"><p class="eyebrow">02 / Inspect the tradeoffs</p><h2>What does a contact decision mean?</h2><label for="model">Choose a model</label> <select id="model"></select><div class="chart-grid"><figure><img id="confusion" alt="Selected-model test confusion matrix: actual rows, predicted columns"><figcaption id="confusion-caption"></figcaption></figure><figure><img id="importance" alt="Selected-model feature importance"><figcaption id="importance-caption"></figcaption></figure></div><p>True positives: responders correctly targeted. False positives: nonresponders contacted. False negatives: responders missed. True negatives: nonresponders correctly excluded. These outcomes do not measure incremental campaign response.</p><div class="controls"><label for="threshold">Explore a training-OOF threshold: <output id="threshold-value" for="threshold"></output></label><input id="threshold" type="range" min="0" max="16" step="1" value="8"><p id="threshold-result" aria-live="polite"></p></div><p class="fine">This control displays training out-of-fold development scores only. Selection maximizes OOF F1, then precision, then proximity to 0.50. Development scores reuse selection labels and are optimistic. The control does not change test evaluation.</p><figure class="single"><img id="threshold-chart" alt="Training OOF precision recall and F1 versus threshold" loading="lazy"></figure><details><summary>Validation permutation importance</summary><p>First training validation fold, F1 at 0.50, five repeats, seed 42. Values measure score decrease when a predictor is shuffled. Correlated totals and components can redistribute importance; none proves causation.</p><div class="table-scroll"><table id="permutation"><caption>Top permutation importance (F1 decrease)</caption><thead><tr><th>Predictor</th><th>Mean decrease</th><th>SD</th></tr></thead><tbody></tbody></table></div></details></div></section>
-<section id="segments" class="container section"><p class="eyebrow">03 / Describe customer groups</p><h2>Two distinct spending profiles.</h2><p id="cluster-design"></p><div class="table-scroll"><table id="profiles"><caption>Original source units; income excludes originally missing values</caption><thead><tr><th>Cluster</th><th>Customers</th><th>Share</th><th>Mean income</th><th>Mean spending</th><th>Web purchases</th><th>Store purchases</th><th>Young children</th><th>Observed response</th></tr></thead><tbody></tbody></table></div><figure class="single"><img src="milestone3/cluster_comparison.png" alt="Cluster sizes and descriptive response rates" loading="lazy"></figure><p>K-Means uses 16 standardized demographic and behavioral inputs. Response and campaign acceptance are excluded from fitting and K selection. These full-data clusters are independent from classification and are not classifier inputs. Cluster numbers are identifiers, not ranks. Response rates are descriptive associations.</p></section>
-<section id="insights" class="tint"><div class="container section"><p class="eyebrow">04 / From evidence to action</p><h2>Turn findings into testable decisions.</h2><div id="business" class="insight-grid"></div><p class="callout">Before use: confirm predictors precede the offer, validate the fixed 2014 date, define contact costs and capacity, and run controlled campaigns. No measured revenue or ROI improvement is claimed.</p><details><summary>Completed exploratory analysis</summary><div class="chart-grid"><figure><img src="milestone1/visualizations/total_spending_by_campaign_acceptance.png" alt="Total spending by campaign response" loading="lazy"></figure><figure><img src="milestone1/visualizations/acceptance_rate_by_past_campaign_responses.png" alt="Acceptance by historical campaign responses" loading="lazy"></figure></div><p>Milestone 1 retains its original cleaning and age convention. Modeling uses the fixed 2014 reference.</p></details></div></section></div>
-<section id="team" class="container section"><p class="eyebrow">The team</p><h2>Five perspectives, one analysis.</h2><div class="team-grid"><article><h3>Calvin Abraham</h3><p>Team Lead, Business Insights &amp; Presentation</p></article><article><h3>Stephen Newton</h3><p>Data Preparation &amp; EDA</p></article><article><h3>Ria Reddy</h3><p>Predictive Modeling &amp; Evaluation</p></article><article><h3>Meilun Wu</h3><p>Documentation &amp; Report Editing</p></article><article><h3>Brooklynn Daniels</h3><p>Analysis &amp; Project Website</p></article></div></section></main>
-<footer class="container"><p>Applied Data Driven Solutions · Kennesaw State University</p><a href="MODEL_EVALUATION.md">Evaluation methods</a> · <a href="DASHBOARD_GUIDE.md">Dashboard guide</a> · <a href="BUSINESS_RECOMMENDATIONS.md">Recommendations</a> · <a href="milestone3/provenance.json">Source provenance</a><p id="provenance" class="fine"></p></footer><noscript>JavaScript is required for interactive results. Read <a href="MODEL_EVALUATION.md">the static evaluation report</a>.</noscript></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Marketing response model evaluation and customer segmentation.">
+  <title>Customer Campaign Analysis</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <script src="dashboard.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#evaluation">Skip to results</a>
+  <header>
+    <a class="brand" href="#overview"><span class="mark" aria-hidden="true">CA</span> Customer Campaign Analysis</a>
+    <button id="nav-toggle" aria-expanded="false" aria-controls="navigation">Menu</button>
+    <nav id="navigation" aria-label="Main navigation">
+      <a href="#evaluation">Models</a><a href="#explore">Model details</a><a href="#segments">Segments</a><a href="#insights">Recommendations</a><a href="#team">Team</a>
+    </nav>
+  </header>
+  <main>
+    <section class="hero" id="overview"><div class="container">
+      <div class="section-heading">
+        <h1>Customer response analysis</h1>
+        <span class="info"><button type="button" aria-label="About this analysis" aria-describedby="overview-info" aria-expanded="false">i</button><span class="tooltip" id="overview-info" role="tooltip">Response means acceptance of the current campaign. Results describe historical observations. Positive-class F1 is the primary evaluation metric.</span></span>
+      </div>
+      <div id="status" role="status" aria-live="polite">Loading results…</div>
+      <div id="overview-cards" class="cards"></div>
+    </div></section>
+    <div id="evidence" hidden>
+      <section id="evaluation" class="container section">
+        <div class="section-heading">
+          <div><h2>Model comparison</h2><p id="design" class="meta"></p></div>
+          <div class="section-actions">
+            <span class="info"><button type="button" aria-label="Evaluation methods and metric definitions" aria-describedby="evaluation-info" aria-expanded="false">i</button><span class="tooltip" id="evaluation-info" role="tooltip">CV F1 uses threshold 0.50; test metrics use training-OOF-selected thresholds. Precision measures responders among contacts; recall measures responders reached. F1 balances both. ROC AUC evaluates ranking. AP is sklearn Average Precision, not trapezoidal PR AUC. SD is fold variation, not a confidence interval. Majority-only test accuracy is about 85%, with positive F1 = 0. Small score differences do not establish a reliable winner.</span></span>
+            <a class="button" href="milestone3/model_comparison.csv" download>Download CSV</a>
+          </div>
+        </div>
+        <p id="winner" class="callout"></p>
+        <div class="table-scroll"><table id="comparison">
+          <caption class="sr-only">Model comparison. Scores range from zero to one. Highlighted row has the highest observed test F1.</caption>
+          <thead><tr><th scope="col">Model</th><th scope="col">Threshold</th><th scope="col">CV F1 ± SD</th><th scope="col">Test accuracy</th><th scope="col">Precision</th><th scope="col">Recall</th><th scope="col">Test F1</th><th scope="col">ROC AUC</th><th scope="col">AP</th></tr></thead><tbody></tbody>
+        </table></div>
+        <div class="chart-grid">
+          <figure><img src="milestone3/roc_comparison.png" alt="Test ROC curves for all four models, with AUC scores and random-ranking reference" loading="lazy"></figure>
+          <figure><img src="milestone3/pr_comparison.png" alt="Test precision-recall curves for all four models, with AP scores and prevalence baseline" loading="lazy"></figure>
+        </div>
+        <details><summary>F1 comparison chart</summary><figure class="single"><img src="milestone3/f1_comparison.png" alt="Test F1 scores at the selected thresholds" loading="lazy"></figure></details>
+      </section>
+      <section id="explore" class="tint"><div class="container section">
+        <div class="section-heading"><h2>Model details</h2><div class="model-control"><label for="model">Model</label><select id="model"></select></div></div>
+        <div class="chart-grid">
+          <figure><div class="figure-heading"><h3>Confusion matrix</h3><span class="info"><button type="button" aria-label="How to read the confusion matrix" aria-describedby="confusion-info" aria-expanded="false">i</button><span class="tooltip" id="confusion-info" role="tooltip">Rows are actual outcomes; columns are predictions. TP: responders reached. FP: nonresponders contacted. FN: responders missed. TN: nonresponders correctly excluded. These counts do not measure incremental response caused by contact.</span></span></div><img id="confusion" alt="Selected-model test confusion matrix" aria-describedby="confusion-caption"><figcaption id="confusion-caption" class="sr-only"></figcaption></figure>
+          <figure><div class="figure-heading"><h3>Feature importance</h3><span class="info"><button type="button" aria-label="Feature importance interpretation" aria-describedby="importance-caption" aria-expanded="false">i</button><span class="tooltip" id="importance-caption" role="tooltip"></span></span></div><img id="importance" alt="Selected-model feature importance"></figure>
+        </div>
+        <div class="controls">
+          <div class="section-heading"><div class="threshold-label"><label for="threshold">Training OOF threshold</label><span class="info"><button type="button" aria-label="Threshold selection method" aria-describedby="threshold-info" aria-expanded="false">i</button><span class="tooltip" id="threshold-info" role="tooltip">The slider explores training out-of-fold scores only and never changes final test results. The frozen threshold maximizes OOF F1, then precision, then proximity to 0.50. Development scores are optimistic because the same labels select the threshold.</span></span></div><output id="threshold-value" for="threshold"></output></div>
+          <input id="threshold" type="range" min="0" max="16" step="1" value="8" aria-describedby="threshold-info">
+          <div class="threshold-scale" aria-hidden="true"><span>0.10</span><span>0.90</span></div>
+          <p id="threshold-result" class="metric-line" aria-live="polite"></p>
+          <p id="selected-threshold" class="meta"></p>
+        </div>
+        <details><summary>Threshold curves</summary><figure class="single"><img id="threshold-chart" alt="Training OOF precision, recall and F1 by threshold" loading="lazy"></figure></details>
+        <details><summary>Permutation importance</summary>
+          <div class="detail-actions"><span class="info"><button type="button" aria-label="Permutation importance method" aria-describedby="permutation-info" aria-expanded="false">i</button><span class="tooltip" id="permutation-info" role="tooltip">First training validation fold, F1 at 0.50, five repeats, seed 42. Values are F1 decreases after shuffling. Correlated predictors can share importance; scores do not establish causation.</span></span></div>
+          <div class="table-scroll"><table id="permutation"><caption class="sr-only">Top validation permutation importance: decrease in F1</caption><thead><tr><th scope="col">Predictor</th><th scope="col">F1 decrease</th><th scope="col">SD</th></tr></thead><tbody></tbody></table></div>
+        </details>
+      </div></section>
+      <section id="segments" class="container section">
+        <div class="section-heading"><div><h2>Customer segments</h2><p id="cluster-design" class="meta"></p></div><span class="info"><button type="button" aria-label="Segmentation methods and limitations" aria-describedby="cluster-info" aria-expanded="false">i</button><span class="tooltip" id="cluster-info" role="tooltip">K-Means uses 16 standardized numeric inputs and all customers. K=2–8 was compared by silhouette with a 5% minimum cluster share. Response and campaign acceptance were excluded from fitting and selection. Cluster labels do not feed the classifiers. Response rates are descriptive, not causal. Income means exclude originally missing values; amounts use source units.</span></span></div>
+        <div class="table-scroll"><table id="profiles"><caption class="sr-only">Customer segment profiles in original units</caption><thead><tr><th scope="col">Cluster</th><th scope="col">Customers</th><th scope="col">Share</th><th scope="col">Mean income</th><th scope="col">Mean spending</th><th scope="col">Web purchases</th><th scope="col">Store purchases</th><th scope="col">Young children</th><th scope="col">Observed response</th></tr></thead><tbody></tbody></table></div>
+        <figure class="single"><img src="milestone3/cluster_comparison.png" alt="Customer counts and observed response rates by cluster" loading="lazy"></figure>
+      </section>
+      <section id="insights" class="tint"><div class="container section">
+        <div class="section-heading"><h2>Recommendations</h2><span class="info"><button type="button" aria-label="Recommendation limitations" aria-describedby="recommendation-info" aria-expanded="false">i</button><span class="tooltip" id="recommendation-info" role="tooltip">Recommendations are hypotheses for controlled campaigns. Confirm pre-offer data availability and the 2014 date convention, define contact costs and capacity, and validate on fresh outcomes. Revenue and ROI improvement have not been measured.</span></span></div>
+        <div id="business" class="insight-grid"></div>
+        <details><summary>Exploratory analysis</summary><div class="chart-grid"><figure><img src="milestone1/visualizations/total_spending_by_campaign_acceptance.png" alt="Total spending by campaign response" loading="lazy"></figure><figure><img src="milestone1/visualizations/acceptance_rate_by_past_campaign_responses.png" alt="Acceptance by historical campaign responses" loading="lazy"></figure></div></details>
+      </div></section>
+    </div>
+    <section id="team" class="container section"><h2>Team</h2><div class="team-grid"><article><h3>Calvin Abraham</h3><p>Team Lead, Business Insights &amp; Presentation</p></article><article><h3>Stephen Newton</h3><p>Data Preparation &amp; EDA</p></article><article><h3>Ria Reddy</h3><p>Predictive Modeling &amp; Evaluation</p></article><article><h3>Meilun Wu</h3><p>Documentation &amp; Report Editing</p></article><article><h3>Brooklynn Daniels</h3><p>Analysis &amp; Project Website</p></article></div></section>
+  </main>
+  <footer class="container"><span>IT4793 · Kennesaw State University</span><nav aria-label="Project documentation"><a href="MODEL_EVALUATION.md">Methods &amp; results</a><a href="BUSINESS_RECOMMENDATIONS.md">Business analysis</a><a href="DASHBOARD_GUIDE.md">Dashboard guide</a><a href="milestone3/provenance.json">Sources</a></nav></footer>
+  <noscript>JavaScript is required for interactive results. Read <a href="MODEL_EVALUATION.md">the evaluation report</a>.</noscript>
+</body>
+</html>

@@ -82,3 +82,9 @@ No tracked source/data artifacts were removed. Temporary documentation-migration
 4. Contact costs, capacity, incremental response and revenue are unmeasured; recommendations require controlled campaign testing.
 
 The repository now provides the requested evaluation, dashboard implementation, documentation and reproducibility artifacts. The limitations above remain explicitly identified rather than treated as completed experimental evidence.
+
+## Dashboard interface refinement
+
+The user subsequently confirmed that the published website works. The later interface refinement removes slogans, numbered secondary labels, repeated teaching paragraphs, redundant captions and visible provenance hashes. Direct section titles, aligned controls, spacing and compact metric summaries now carry the visual hierarchy. Evaluation definitions and business limitations remain accessible through information tips with keyboard focus, hover, touch pinning, Escape and outside-click dismissal. Table captions, image descriptions, input labels and live threshold values remain accessible. Optional F1/threshold charts are expandable. The read-only dashboard has no dangerous operations.
+
+Six frontend logic/structure checks pass for the refined interface, including all-model switching, OOF endpoints, tooltip interaction, accessible tooltip targets, missing-data recovery and malformed-data rejection. These checks use a DOM double; no new browser rendering verification is claimed for this visual revision.

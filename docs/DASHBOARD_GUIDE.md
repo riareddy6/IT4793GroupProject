@@ -23,13 +23,15 @@ Do not double-click `index.html`: browser file-origin restrictions may block JSO
 | Section | Meaning and interaction |
 |---|---|
 | Overview | Verified customer count, class counts/rate, primary KPI and business target |
-| Evaluation | Four-model comparison, ROC/PR curves and selected-threshold test F1; download CSV |
-| Explore a model | Dropdown changes confusion matrix, importance, permutation table and OOF threshold curve |
+| Model comparison | Four-model comparison and ROC/PR curves; download CSV; expand the F1 chart |
+| Model details | Labeled dropdown changes confusion matrix, importance, permutation table and OOF threshold curve |
 | Threshold slider | Shows an existing training-OOF grid row. Starts at the selected threshold on model change. Never uses test labels to tune or update final metrics |
 | Segments | Counts, response counts/rates, income/spending/purchase/household profiles; K and silhouette |
 | Decisions | Evidence-based suggestions explicitly framed as campaign hypotheses |
 | Completed exploratory analysis | Expandable original EDA charts |
 | Team / footer | Existing team identities, method documentation and source provenance |
+
+The interface uses short section titles and compact result summaries. Method definitions, interpretation limits and selection caveats are available through labeled **i** buttons: hover or focus to view, click/tap to pin, press Escape to dismiss, or click outside to close a pinned tip. Table captions and confusion counts remain available to screen readers. The threshold slider announces its probability cutoff and training-OOF F1. Additional F1 and threshold charts are expandable. No destructive or irreversible actions are present.
 
 Positive-class F1 is the primary KPI. CV F1 uses 0.50; held-out classification metrics use per-model frozen thresholds. AP is sklearn Average Precision, distinct from trapezoidal PR AUC. Confusion matrices have actual rows and predicted columns, with TN/FP/FN/TP labels. Segment response rates are historical descriptive summaries, not classifier performance.
 
