@@ -1,6 +1,20 @@
 import numpy as np
 
 def validate(data):
+    """Validate processed customer records and summarize data quality.
+
+    Args:
+        data (pd.DataFrame): Records containing ID, Response, Year_Birth and numeric/categorical predictors.
+
+    Returns:
+        dict: Dimensions, dtypes, missing counts, target counts, constant columns and birth-year range.
+
+    Processing:
+        Require both binary target classes, unique IDs and finite observed numeric values; calculate audit statistics.
+
+    Raises:
+        ValueError: For missing/invalid target, repeated IDs or infinite numeric values. KeyError: For missing required columns. No mutation.
+    """
     if data['Response'].isna().any() or set(data['Response'].unique()) != {0, 1}:
         raise ValueError('Response must contain both binary classes and no missing values')
     if not data['ID'].is_unique:

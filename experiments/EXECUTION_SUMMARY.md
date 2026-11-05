@@ -27,22 +27,22 @@ python -m experiments.verify_outputs
 | random_forest | 0.5628 ± 0.0301 | 0.5874 | 0.50 | 0.5526 | 0.6269 | 0.5874  | 0.6205 |
 | gradient_boosting | 0.5107 ± 0.0438 | 0.4898 | 0.25 | 0.4935 | 0.5672 | 0.5278  | 0.6268 |
 
-Provisional recommendation by training CV F1: **logistic_regression**. See the [selection summary](outputs/comparison/run_20261014_235704_874397_c68de835/model_selection_summary.md) for marketing and interpretability tradeoffs.
+Provisional recommendation by training CV F1: **logistic_regression**. See the [selection summary](outputs/comparison/run_20261105_225516_782443_3a30d80c/model_selection_summary.md) for marketing and interpretability tradeoffs.
 
 All four classifiers use 1,789 training observations, 448 independent test observations, the same persisted folds, and identical underlying input features (counts listed below). One-hot encoding changes the transformed feature count. Numerical scaling is enabled for Logistic Regression and K Means. Exact estimator parameters are in each run config.
 
 ## Saved runs
 
-- `logistic_regression`: [run_20261013_185446_609612_1216ba4a](outputs/logistic_regression/run_20261013_185446_609612_1216ba4a/run_metadata.json), 2237 rows, 28 input features.
+- `logistic_regression`: [run_20261105_225437_417590_1216ba4a](outputs/logistic_regression/run_20261105_225437_417590_1216ba4a/run_metadata.json), 2237 rows, 28 input features.
   Training/test: 1789/448; captured warnings: 0.
-- `decision_tree`: [run_20261013_185500_256885_7761ad21](outputs/decision_tree/run_20261013_185500_256885_7761ad21/run_metadata.json), 2237 rows, 28 input features.
+- `decision_tree`: [run_20261105_225442_160928_7761ad21](outputs/decision_tree/run_20261105_225442_160928_7761ad21/run_metadata.json), 2237 rows, 28 input features.
   Training/test: 1789/448; captured warnings: 0.
-- `random_forest`: [run_20261013_185521_750053_673e200e](outputs/random_forest/run_20261013_185521_750053_673e200e/run_metadata.json), 2237 rows, 28 input features.
+- `random_forest`: [run_20261105_225449_960557_673e200e](outputs/random_forest/run_20261105_225449_960557_673e200e/run_metadata.json), 2237 rows, 28 input features.
   Training/test: 1789/448; captured warnings: 0.
-- `gradient_boosting`: [run_20261013_185624_058701_3f073f00](outputs/gradient_boosting/run_20261013_185624_058701_3f073f00/run_metadata.json), 2237 rows, 28 input features.
+- `gradient_boosting`: [run_20261105_225503_174305_3f073f00](outputs/gradient_boosting/run_20261105_225503_174305_3f073f00/run_metadata.json), 2237 rows, 28 input features.
   Training/test: 1789/448; captured warnings: 0.
-- `kmeans`: [run_20261013_185820_218800_afad3148](outputs/kmeans/run_20261013_185820_218800_afad3148/run_metadata.json), 2237 rows, 16 input features.
-- Comparison: [run_20261014_235704_874397_c68de835](outputs/comparison/run_20261014_235704_874397_c68de835/model_comparison.csv).
+- `kmeans`: [run_20261105_225512_631815_afad3148](outputs/kmeans/run_20261105_225512_631815_afad3148/run_metadata.json), 2237 rows, 16 input features.
+- Comparison: [run_20261105_225516_782443_3a30d80c](outputs/comparison/run_20261105_225516_782443_3a30d80c/model_comparison.csv).
 
 ## Customer segmentation
 
@@ -70,6 +70,6 @@ Threshold OOF results are development estimates; the chosen threshold is evaluat
 
 Next: validate pre-offer data availability, review segment profiles with marketing stakeholders, define cost/capacity objectives, and use nested CV or fresh holdout data for subsequent tuning. See [README](README.md) for preprocessing, configurations, reproduction and limitations.
 
-Historical run artifacts are preserved. Current summaries and new comparisons omit the removed ranking metric and its curve; classifiers were not retrained for this reporting change.
+Historical run artifacts are preserved. Milestone 3 restores ROC AUC in shared metrics and comparison exports; probability metrics are separate from threshold-dependent F1.
 
 Verification: all required artifacts exist and are nonempty; JSON/CSV parsing, image decoding, joblib loading, prediction-threshold consistency, identical split IDs, and cluster totals passed.

@@ -1,0 +1,20 @@
+{
+  "validation_date": "2026-11-05",
+  "python_unittest_cases_passed": 9,
+  "node_logic_tests_passed": 4,
+  "node_logic_test_environment": "Minimal DOM double in node:vm; not a browser",
+  "python_files_compiled": 34,
+  "experiment_modules_imported": 29,
+  "documented_python_functions": 66,
+  "function_documentation_exceptions": 0,
+  "generated_pngs_decoded": 16,
+  "documentation_links": "all checked targets exist",
+  "dashboard_resource_links": "all checked targets exist",
+  "dashboard_javascript_syntax": "node --check passed",
+  "local_homepage_http_status": 200,
+  "standalone_figures_visually_inspected": ["roc_comparison.png", "confusion_random_forest.png"],
+  "real_browser_interaction": "unverified",
+  "browser_limitation": "Browser access host unavailable; native fallback stopped because tool could not confidently determine current Windows browser URL. No further UI input attempted.",
+  "mobile_visual_qa": "unverified",
+  "external_publication": "not performed"
+}

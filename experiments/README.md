@@ -1,6 +1,6 @@
 # Milestone 2 independent experiments
 
-Run commands from the repository root using Python 3.14. Dependencies were installed locally in `.experiment_dependencies` because the pre-existing `.venv` points to an inaccessible Python executable. No existing dataset, experiment, notebook, website, or report was edited.
+Historical Milestone 2 guide, with reporting updates for Milestone 3. Run commands from the repository root using Python 3.14. Dependencies are available locally in `.experiment_dependencies` because the pre-existing `.venv` points to an inaccessible Python executable. See the [root README](../README.md) for current installation, dashboard and full-workflow validation commands. Retained historical dataset and training-run artifacts remain unchanged.
 
 ```powershell
 python -m pip install --target .experiment_dependencies -r experiments/requirements.txt
@@ -44,7 +44,7 @@ See `EXECUTION_SUMMARY.md` for verified results and exact artifact paths. Next s
 
 ## Current reporting scope and standalone segmentation explanation
 
-Current classification evaluation and comparison omit ROC AUC and ROC curves. Older saved runs remain unchanged as historical records; regenerating a comparison excludes those legacy metric fields without retraining classifiers. Precision-Recall curves and Average Precision remain included.
+Milestone 3 restores ROC AUC and ROC curves to classification evaluation. Comparison recomputes test scores from saved probabilities and includes ROC AUC. Older saved runs remain unchanged. Run `python -m experiments.milestone3.build` for a pinned, verified comparison, combined ROC/PR curves, threshold analysis, complete confusion matrices and dashboard assets. Precision-Recall uses sklearn Average Precision, not trapezoidal PR AUC.
 
 The four classifiers consume the Milestone 1 processed CSV directly with shared classification preprocessing; they never read K Means cluster assignments. K Means is an independent segmentation analysis, not a preprocessing stage for classification.
 

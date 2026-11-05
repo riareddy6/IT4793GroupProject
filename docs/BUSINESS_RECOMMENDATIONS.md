@@ -1,0 +1,21 @@
+# Evidence-based business recommendations
+
+These recommendations use verified historical records. Expected benefits are hypotheses for future controlled campaigns, not measured revenue or ROI improvements. Exact generated metrics and figure sources are in [MODEL_EVALUATION.md](MODEL_EVALUATION.md).
+
+| Recommendation | Supporting evidence | Business interpretation | Recommended action | Expected benefit hypothesis | Limitation / assumption |
+|---|---|---|---|---|---|
+| Test differentiated offers for the higher-spending segment | Cluster 1: 933 customers, mean spending about 1,207, 203/933 responses (21.76%); Cluster 0: 1,304 customers, mean spending about 176, 131/1304 responses (10.05%) | Historical spending and observed response differ across groups | Randomize premium/complementary offers within segments, retaining control customers | Better matching of offer to observed purchasing behavior may increase response | Full-data descriptive groups, no stability validation or causal effect; segment labels are arbitrary |
+| Choose outreach breadth using capacity and costs | Random Forest selected-threshold test precision 55.26%, recall 62.69%; Logistic Regression precision 48.42%, recall 68.66% | RF contacts fewer nonresponders, while LR reaches more observed responders in this holdout | Define contact capacity/cost and missed-response cost; choose policy on development data and validate on new outcomes | Reduced wasted contacts or fewer missed responders depending on objective | Probabilities are not established as calibrated; F1 does not encode profit; test set already inspected |
+| Investigate recency and engagement in campaign design | Recency, customer tenure and historical campaign responses feature prominently in saved model interpretations; standardized LR Recency coefficient is negative | More recent purchasing is associated with higher modeled response conditional on other inputs | Confirm all timestamps precede the offer; investigate recency bands on training data and test outreach timing randomly | Timelier contact may improve relevance | Coefficients/importance do not prove causation; no universal recency cutoff is established |
+| Use spending/channel patterns to test relevant messaging | Higher-spending cluster has about 5.75 web and 8.54 store purchases versus 2.90 and 3.83 in lower-spending cluster | Purchase channel activity differs; a single offer strategy may miss these patterns | Test channel-appropriate messaging with consent and randomized controls | More relevant communication may improve response | These are historical counts, not channel attribution or demonstrated conversion effects |
+| Retain broad evaluation and protect fresh evidence | RF highest observed test F1 0.5874; LR highest mean CV F1 0.5756; only 67 holdout positives | A single test leaderboard cannot establish a stable general winner | Use training-only/nested CV for any further tuning; reserve fresh outcomes for confirmation; report PR, confusion and F1 alongside ROC | More reliable decisions and fewer tuning-induced performance claims | No repeated-split significance analysis has been completed |
+
+## Translating the confusion matrix into contact decisions
+
+At the frozen historical thresholds, Random Forest targets 76 of 448 holdout customers: 42 observed responders and 34 nonresponders. It misses 25 observed responders. Logistic Regression targets 95: 46 observed responders and 49 nonresponders, missing 21. These counts make the precision/recall tradeoff concrete; they do not establish how contact changes behavior or generates incremental revenue.
+
+The majority-only predictor has 85.04% holdout accuracy while finding zero responders. This is why campaign decisions should consider the positive-class F1, retrieval metrics, error counts and operational constraints rather than accuracy alone.
+
+## Validation before budget allocation
+
+Confirm pre-offer feature availability and a defensible reference date. Establish costs, benefit and capacity. Check clustering stability across resampling/feature choices, then run randomized segment-specific campaigns and measure incremental response, contact burden and actual revenue. Historical feature importance should guide questions to test, rather than become a causal business claim.

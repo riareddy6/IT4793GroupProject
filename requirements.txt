@@ -1,0 +1,4 @@
+-r experiments/requirements.txt
+seaborn==0.13.2
+Pillow>=11
+threadpoolctl>=3.6

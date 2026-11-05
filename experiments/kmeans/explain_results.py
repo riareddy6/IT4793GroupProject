@@ -7,6 +7,21 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 def write_explanation(run, output):
+    """Write a standalone interpretation from completed K-Means artifacts.
+
+    Args:
+        run (str | Path): Completed run with metadata, cluster profiles and candidate scores.
+        output (str | Path): Destination Markdown file; parent must exist.
+
+    Returns:
+        Path: Written explanation containing inputs, candidate scores, profiles and limitations.
+
+    Processing:
+        Read saved CSV/JSON evidence, format original-unit profiles, describe lower/higher spending groups for two clusters and explain independence from classification.
+
+    Raises:
+        ValueError: If run is incomplete. StopIteration: If selected K is absent. OSError: For missing inputs or unwritable output. Overwrites only the requested explanation.
+    """
     run = Path(run)
     meta = json.loads((run / 'run_metadata.json').read_text(encoding='utf-8'))
     if meta.get('status') != 'complete':
@@ -50,6 +65,20 @@ def write_explanation(run, output):
     return output
 
 def main():
+    """Regenerate a K-Means explanation from a completed run.
+
+    Args:
+        None: CLI --run Path defaults to newest completed K-Means run; --output Path defaults to experiments/kmeans/RESULTS_EXPLANATION.md.
+
+    Returns:
+        None: Prints the generated artifact directory or report; command-line side effects described below.
+
+    Processing:
+        Parse arguments, select completed source and call write_explanation; print output path.
+
+    Raises:
+        ValueError: If no completed run exists. OSError: For missing artifacts or unwritable output. Overwrites the requested explanation.
+    """
     parser=argparse.ArgumentParser()
     parser.add_argument('--run',type=Path)
     parser.add_argument('--output',type=Path,default=ROOT/'kmeans'/'RESULTS_EXPLANATION.md')

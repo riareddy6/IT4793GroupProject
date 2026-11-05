@@ -1,0 +1,6 @@
+__pycache__/
+*.py[cod]
+.experiment_dependencies/
+.venv/
+.venv-m3/
+.pytest_cache/

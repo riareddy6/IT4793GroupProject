@@ -1,0 +1,5 @@
+model,estimator,explicit_parameters,numeric_scaling,class_weight,seed,train_rows,test_rows,cv,features_before_encoding,features_after_encoding
+Logistic Regression,sklearn.linear_model._logistic.LogisticRegression,"{""class_weight"": ""balanced"", ""max_iter"": 2000, ""random_state"": 42, ""solver"": ""lbfgs""}",True,balanced,42,1789,448,shared shuffled 5-fold StratifiedKFold,28,39
+Decision Tree,sklearn.tree._classes.DecisionTreeClassifier,"{""class_weight"": ""balanced"", ""max_depth"": 5, ""min_samples_leaf"": 10, ""random_state"": 42}",False,balanced,42,1789,448,shared shuffled 5-fold StratifiedKFold,28,39
+Random Forest,sklearn.ensemble._forest.RandomForestClassifier,"{""class_weight"": ""balanced"", ""min_samples_leaf"": 3, ""n_estimators"": 300, ""n_jobs"": -1, ""random_state"": 42}",False,balanced,42,1789,448,shared shuffled 5-fold StratifiedKFold,28,39
+Gradient Boosting,sklearn.ensemble._gb.GradientBoostingClassifier,"{""learning_rate"": 0.05, ""max_depth"": 3, ""n_estimators"": 200, ""random_state"": 42}",False,None,42,1789,448,shared shuffled 5-fold StratifiedKFold,28,39

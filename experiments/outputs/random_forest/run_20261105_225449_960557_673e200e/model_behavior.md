@@ -1,0 +1,2 @@
+Top features: Customer_Tenure_Days, Recency, Past_Campaign_Responses, Total_Spending, Income, MntMeatProducts, MntGoldProds, MntWines.
+Coefficients describe conditional log odds per scaled numeric unit; correlated predictors can redistribute effects. Impurity importance favors high-cardinality predictors. Validation permutation measures F1 loss at threshold 0.50 and is descriptive. None establish causation.

@@ -1,0 +1,4 @@
+partition,rows,nonresponders,responders,response_rate
+Full,2237,1903,334,0.149307107733572
+Train,1789,1522,267,0.149245388485187
+Test,448,381,67,0.149553571428571

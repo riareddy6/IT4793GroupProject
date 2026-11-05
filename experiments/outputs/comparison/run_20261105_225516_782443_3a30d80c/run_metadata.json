@@ -1,0 +1,10 @@
+{
+  "status": "complete",
+  "source_runs": [
+    "C:\\Users\\mei\\OneDrive\\KSU\\KSU Fall 2026\\IT4793 Applied Data Driven Solution\\IT4793GroupProject\\experiments\\outputs\\logistic_regression\\run_20261105_225437_417590_1216ba4a",
+    "C:\\Users\\mei\\OneDrive\\KSU\\KSU Fall 2026\\IT4793 Applied Data Driven Solution\\IT4793GroupProject\\experiments\\outputs\\decision_tree\\run_20261105_225442_160928_7761ad21",
+    "C:\\Users\\mei\\OneDrive\\KSU\\KSU Fall 2026\\IT4793 Applied Data Driven Solution\\IT4793GroupProject\\experiments\\outputs\\random_forest\\run_20261105_225449_960557_673e200e",
+    "C:\\Users\\mei\\OneDrive\\KSU\\KSU Fall 2026\\IT4793 Applied Data Driven Solution\\IT4793GroupProject\\experiments\\outputs\\gradient_boosting\\run_20261105_225503_174305_3f073f00"
+  ],
+  "split_id": "287480a9a9870a43ec7ed3f984324cd844fdec9d9bacdbe40519fb04640b5094"
+}

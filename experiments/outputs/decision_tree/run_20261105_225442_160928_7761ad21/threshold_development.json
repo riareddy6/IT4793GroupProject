@@ -1,0 +1,24 @@
+{
+  "label": "development performance, not independent validation",
+  "selection": "maximum training OOF positive F1; ties: precision then proximity to 0.50",
+  "threshold": 0.75,
+  "metrics": {
+    "accuracy": 0.8569032979318055,
+    "precision": 0.5251141552511416,
+    "recall": 0.4307116104868914,
+    "f1": 0.4732510288065844,
+    "macro_f1": 0.6952283604576259,
+    "average_precision": 0.4569228277761692,
+    "roc_auc": 0.7783568830683065,
+    "confusion_matrix": [
+      [
+        1418,
+        104
+      ],
+      [
+        152,
+        115
+      ]
+    ]
+  }
+}

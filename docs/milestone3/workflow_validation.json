@@ -1,0 +1,39 @@
+{
+  "milestone1": {
+    "rows": 2237,
+    "processed_hash_matches": true,
+    "generated_eda_figures": 8
+  },
+  "interpretation": {
+    "permutation": {
+      "logistic_regression": "mean and SD reproduced on first training validation fold",
+      "decision_tree": "mean and SD reproduced on first training validation fold",
+      "random_forest": "mean and SD reproduced on first training validation fold",
+      "gradient_boosting": "mean and SD reproduced on first training validation fold"
+    },
+    "silhouette": 0.3037603760365297
+  },
+  "training": {
+    "logistic_regression": {
+      "run": "experiments/outputs/logistic_regression/run_20261105_225437_417590_1216ba4a",
+      "max_probability_difference": 0.0
+    },
+    "decision_tree": {
+      "run": "experiments/outputs/decision_tree/run_20261105_225442_160928_7761ad21",
+      "max_probability_difference": 0.0
+    },
+    "random_forest": {
+      "run": "experiments/outputs/random_forest/run_20261105_225449_960557_673e200e",
+      "max_probability_difference": 3.3306690738754696e-16
+    },
+    "gradient_boosting": {
+      "run": "experiments/outputs/gradient_boosting/run_20261105_225503_174305_3f073f00",
+      "max_probability_difference": 0.0
+    },
+    "kmeans": {
+      "run": "experiments/outputs/kmeans/run_20261105_225512_631815_afad3148",
+      "assignments_match": true
+    }
+  },
+  "historical_artifacts_unchanged": true
+}

@@ -5,6 +5,7 @@ import joblib
 import pandas as pd
 from PIL import Image
 from experiments.common.result_saver import ROOT
+from experiments.common.artifacts import latest
 
 CLASSIFIERS=['logistic_regression','decision_tree','random_forest','gradient_boosting']
 FILES=['model.joblib','config.json','run_metadata.json','cv_metrics.json','test_metrics.json',
@@ -13,13 +14,21 @@ FILES=['model.joblib','config.json','run_metadata.json','cv_metrics.json','test_
 KFILES=['model.joblib','config.json','run_metadata.json','cluster_metrics.csv','cluster_assignments.csv',
         'cluster_profiles.csv','silhouette_scores.png','cluster_size_distribution.png','cluster_response_rates.png']
 
-def latest(name):
-    for p in sorted((ROOT/'outputs'/name).glob('run_*'),reverse=True):
-        if (p/'run_metadata.json').exists() and json.loads((p/'run_metadata.json').read_text())['status']=='complete':
-            return p
-    raise ValueError(name+' has no successful run')
-
 def main():
+    """Verify latest completed experiment artifacts and regenerate the Milestone 2 execution summary.
+
+    Args:
+        None: No parameters; reads latest completed runs for four classifiers, clustering and comparison.
+
+    Returns:
+        None: Prints the generated artifact directory or report; command-line side effects described below.
+
+    Processing:
+        Check file presence, JSON/CSV decoding, PNG integrity, joblib loading, threshold classes, shared split and cluster totals; write experiments/EXECUTION_SUMMARY.md.
+
+    Raises:
+        AssertionError/OSError/ValueError: On invalid or missing artifacts. Loads trusted local joblib files and overwrites the execution summary.
+    """
     report=['# Verified Milestone 2 execution','', 'Original project files were preserved. Created `experiments/` with six shared utility modules, five independent training modules and JSON configurations, result comparison, pinned requirements, documentation, verification and separate timestamped outputs. Local dependencies are in `.experiment_dependencies/`.','',
             '## Exact execution commands','', 'From repository root in PowerShell:','', '```powershell', r'$env:PYTHONPATH="$PWD\.experiment_dependencies"',
             'python -m experiments.common.split_manager']
@@ -71,7 +80,7 @@ def main():
                'The original virtual environment was inaccessible; dependencies were installed locally. Pip reported conflicts with globally installed streamlit/sklearn-compat; these experiments do not import those packages and use the isolated local dependency path. An initial path-resolution error was corrected and its failed run retained. Initial sandbox dependency-read failures occurred before model training. Failed records: '+', '.join(str(f.relative_to(ROOT.parent)) for f in failed),
                '', 'Threshold OOF results are development estimates; the chosen threshold is evaluated once on frozen test probabilities. Models are provisionally ranked by training CV F1, not test accuracy. Historical feature timing and the fixed 2014 date convention need verification. Existing globally imputed incomes were restored in memory; source files were untouched. Correlated aggregates complicate importance. Segments and their response rates are descriptive; cluster stability and operational interpretability remain to be reviewed.',
                '', 'Next: validate pre-offer data availability, review segment profiles with marketing stakeholders, define cost/capacity objectives, and use nested CV or fresh holdout data for subsequent tuning. See [README](README.md) for preprocessing, configurations, reproduction and limitations.', '',
-               'Historical run artifacts are preserved. Current summaries and new comparisons omit the removed ranking metric and its curve; classifiers were not retrained for this reporting change.', '',
+               'Historical run artifacts are preserved. Milestone 3 restores ROC AUC in shared metrics and comparison exports; probability metrics are separate from threshold-dependent F1.', '',
                'Verification: all required artifacts exist and are nonempty; JSON/CSV parsing, image decoding, joblib loading, prediction-threshold consistency, identical split IDs, and cluster totals passed.']
     (ROOT/'EXECUTION_SUMMARY.md').write_text('\n'.join(report),encoding='utf-8')
     print('\n'.join(report[:35]))

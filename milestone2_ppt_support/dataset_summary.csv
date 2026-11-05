@@ -1,0 +1,8 @@
+stage,rows,columns,meaning
+Raw source,2240,29,"29 total columns = 28 non-target columns, including ID and constants"
+Milestone 1 processed CSV,2237,33,"33 total columns, not 33 model predictors"
+Classification before encoding,2237,28,26 numeric + 2 categorical predictors
+Training before encoding,1789,28,Response stored separately
+Testing before encoding,448,28,Response stored separately
+Final classification after encoding,2237,39,26 numeric + all education/marital indicator columns
+K Means input,2237,16,Numerical features; full dataset

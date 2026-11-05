@@ -42,13 +42,39 @@ HISTORICAL_CAMPAIGN_COLUMNS = [
 
 
 def prepare_output_directories() -> None:
-    """Create the output directories while leaving the raw data untouched."""
+    """Create Milestone 1 artifact directories without modifying raw data.
+
+    Args:
+        None: Uses configured module paths.
+
+    Returns:
+        None: Creates processed_data, reports and visualizations directories if needed.
+
+    Processing:
+        Call mkdir with parents=True and exist_ok=True for the three configured directories.
+
+    Raises:
+        OSError: If a directory cannot be created. Existing artifacts are not removed.
+    """
     for directory in (PROCESSED_DIR, REPORT_DIR, VISUALIZATION_DIR):
         directory.mkdir(parents=True, exist_ok=True)
 
 
 def load_raw_data() -> pd.DataFrame:
-    """Load the tab-separated Kaggle file and validate the expected target."""
+    """Load the raw tab-separated customer dataset and require its target column.
+
+    Args:
+        None: Uses configured module paths.
+
+    Returns:
+        pd.DataFrame: Raw records parsed with tab separation.
+
+    Processing:
+        Check RAW_DATA_PATH exists, read TSV and verify Response is present.
+
+    Raises:
+        FileNotFoundError: If raw data is absent. ValueError: If Response is missing. Does not modify the source file.
+    """
     if not RAW_DATA_PATH.exists():
         raise FileNotFoundError(f"Raw dataset was not found: {RAW_DATA_PATH}")
     data = pd.read_csv(RAW_DATA_PATH, sep="\t")
@@ -58,7 +84,20 @@ def load_raw_data() -> pd.DataFrame:
 
 
 def inspect_data(data: pd.DataFrame) -> dict:
-    """Return initial inspection results for the quality report."""
+    """Summarize raw dimensions, missingness, types, dates and potential data quality issues.
+
+    Args:
+        data (pd.DataFrame): Raw records including Income, Year_Birth, Dt_Customer and Response.
+
+    Returns:
+        dict: JSON-compatible quality statistics including target values and sentinel counts.
+
+    Processing:
+        Inspect numeric negatives, parse DD-MM-YYYY dates with coercion and summarize missingness, duplicates and ranges.
+
+    Raises:
+        KeyError: For absent required columns. ValueError: For invalid numeric range conversions. Does not modify data or write files.
+    """
     numeric_columns = data.select_dtypes(include=np.number).columns.tolist()
     date_parse_failures = int(
         pd.to_datetime(data["Dt_Customer"], format="%d-%m-%Y", errors="coerce").isna().sum()
@@ -86,7 +125,20 @@ def inspect_data(data: pd.DataFrame) -> dict:
 
 
 def clean_data(data: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
-    """Apply conservative, documented cleaning rules and return an audit."""
+    """Apply the historical conservative customer cleaning rules and record their effects.
+
+    Args:
+        data (pd.DataFrame): Raw customer records with Year_Birth and Income.
+
+    Returns:
+        tuple[pd.DataFrame, dict]: Cleaned copy and audit of row removals, income replacement/imputation and duplicates.
+
+    Processing:
+        Exclude births before 1926, replace income 666666 with missing, fill income with global cleaned median, then remove exact duplicate rows. This EDA imputation is restored to missing before model fitting.
+
+    Raises:
+        KeyError: For missing required columns. Does not mutate the input or write files. Retains the historical 2026 exclusion convention.
+    """
     cleaned = data.copy()
     audit = {
         "rows_before": int(len(cleaned)),
@@ -125,7 +177,20 @@ def clean_data(data: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
 
 
 def engineer_features(data: pd.DataFrame) -> pd.DataFrame:
-    """Create the project-plan features without mixing the current target in."""
+    """Add age, total spending, household child count and historical campaign response count.
+
+    Args:
+        data (pd.DataFrame): Cleaned data containing spending components, Year_Birth, Kidhome/Teenhome and AcceptedCmp1–5.
+
+    Returns:
+        pd.DataFrame: Copy with Customer_Age, Total_Spending, Number_of_Children and Past_Campaign_Responses.
+
+    Processing:
+        Use age 2026-Year_Birth for Milestone 1; sum six spending columns, two child counts and only prior campaign indicators. Modeling later replaces age with the fixed 2014 convention.
+
+    Raises:
+        ValueError: If a historical campaign column is missing. KeyError: For other missing inputs. No target inclusion, file output or input mutation.
+    """
     engineered = data.copy()
     engineered["Customer_Age"] = 2026 - engineered["Year_Birth"]
     engineered["Total_Spending"] = engineered[SPENDING_COLUMNS].sum(axis=1)
@@ -138,7 +203,22 @@ def engineer_features(data: pd.DataFrame) -> pd.DataFrame:
 
 
 def save_quality_outputs(inspection: dict, audit: dict, data: pd.DataFrame) -> None:
-    """Write machine-readable inspection and cleaning results."""
+    """Export Milestone 1 inspection, cleaning, type and raw missingness reports.
+
+    Args:
+        inspection (dict): Statistics returned by inspect_data.
+        audit (dict): Cleaning decisions/counts returned by clean_data.
+        data (pd.DataFrame): Frame supplying column names/dtypes; current pipeline passes raw data.
+
+    Returns:
+        None: Writes data_quality_summary.json, column_dtypes.csv and missing_value_counts.csv under REPORT_DIR.
+
+    Processing:
+        Combine inspection and audit into JSON; export dtype and inspection missing-count tables.
+
+    Raises:
+        KeyError: For incomplete inspection. OSError: If report files cannot be written. Overwrites named report files.
+    """
     quality = {"initial_inspection": inspection, "cleaning_audit": audit}
     (REPORT_DIR / "data_quality_summary.json").write_text(
         json.dumps(quality, indent=2), encoding="utf-8"
@@ -157,11 +237,38 @@ def save_quality_outputs(inspection: dict, audit: dict, data: pd.DataFrame) -> N
 
 
 def save_visualizations(data: pd.DataFrame) -> list[str]:
-    """Create presentation-ready EDA charts and return their filenames."""
+    """Create Milestone 1 presentation-ready EDA figures and a correlation table.
+
+    Args:
+        data (pd.DataFrame): Processed customer data with Response and engineered analysis features.
+
+    Returns:
+        list[str]: Eight generated PNG filenames; also writes correlation_matrix.csv.
+
+    Processing:
+        Configure seaborn styling; plot target counts, age, spending/income by response, children and past response rates, and numeric correlations. Export PNGs at 300 DPI.
+
+    Raises:
+        KeyError: If required columns are missing. OSError: For failed exports. Changes plotting theme and overwrites named figures under VISUALIZATION_DIR.
+    """
     sns.set_theme(style="whitegrid", context="notebook")
     created: list[str] = []
 
     def save_figure(filename: str) -> None:
+        """Save a current EDA figure and record its filename in the enclosing list.
+
+        Args:
+            filename (str): PNG basename under VISUALIZATION_DIR.
+
+        Returns:
+            None: Writes the figure and appends filename to the enclosing created list.
+
+        Processing:
+            Apply tight layout, save at 300 DPI with tight bounds and close the active plot.
+
+        Raises:
+            OSError: For failed image writing. Mutates the enclosing created list and closes the active figure.
+        """
         plt.tight_layout()
         plt.savefig(VISUALIZATION_DIR / filename, dpi=300, bbox_inches="tight")
         plt.close()
@@ -230,7 +337,20 @@ def save_visualizations(data: pd.DataFrame) -> list[str]:
 
 
 def create_preliminary_findings(data: pd.DataFrame) -> list[str]:
-    """Calculate concise findings from the processed data rather than assumptions."""
+    """Calculate descriptive campaign response findings from processed observations.
+
+    Args:
+        data (pd.DataFrame): Processed records containing target, spending, income, age, children and prior campaign totals.
+
+    Returns:
+        list[str]: English observations on prevalence, group medians and response-rate ranges.
+
+    Processing:
+        Split accepted/nonaccepted records, calculate median differences and children/history response-rate ranges, then format statements.
+
+    Raises:
+        KeyError: For missing analysis columns. No file output or mutation. Findings are associations, not causal conclusions.
+    """
     response_rate = data[TARGET].mean()
     accepted = data.loc[data[TARGET] == 1]
     not_accepted = data.loc[data[TARGET] == 0]
@@ -250,7 +370,23 @@ def create_preliminary_findings(data: pd.DataFrame) -> list[str]:
 
 
 def create_summary(inspection: dict, audit: dict, data: pd.DataFrame, charts: list[str]) -> None:
-    """Write the English Milestone 1 documentation."""
+    """Write the original Milestone 1 dataset-readiness report from computed evidence.
+
+    Args:
+        inspection (dict): Raw-data inspection statistics.
+        audit (dict): Cleaning audit.
+        data (pd.DataFrame): Processed records used for preliminary findings.
+        charts (list[str]): Generated EDA image basenames included in the report.
+
+    Returns:
+        None: Writes REPORT_DIR/milestone1_summary.md.
+
+    Processing:
+        Format dimensions, types, quality checks, cleaning, feature definitions, chart list and computed preliminary findings.
+
+    Raises:
+        KeyError: For incomplete inputs. OSError: If the summary cannot be written. Overwrites the historical summary when explicitly run.
+    """
     findings = create_preliminary_findings(data)
     dtype_lines = "\n".join(f"- `{column}`: `{dtype}`" for column, dtype in inspection["dtypes"].items())
     missing_lines = "\n".join(
@@ -337,7 +473,20 @@ All charts are PNG files saved at 300 DPI under `docs/milestone1/visualizations`
 
 
 def run_pipeline() -> pd.DataFrame:
-    """Run all Milestone 1 steps and return the processed dataset."""
+    """Run the complete Milestone 1 cleaning, feature engineering, EDA and export workflow.
+
+    Args:
+        None: Uses configured module paths.
+
+    Returns:
+        pd.DataFrame: Processed customer dataset; exports processed CSV, quality/statistical reports, EDA figures and summary.
+
+    Processing:
+        Create output directories; load/inspect raw data; clean and engineer features; serialize processed data; create reports and charts; print dimensions.
+
+    Raises:
+        OSError/ValueError: Loading or writing failures propagate. Overwrites named Milestone 1 outputs but never the raw source. For validation, redirect output globals to a temporary directory.
+    """
     prepare_output_directories()
     raw_data = load_raw_data()
     inspection = inspect_data(raw_data)

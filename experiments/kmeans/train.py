@@ -12,10 +12,24 @@ from threadpoolctl import threadpool_limits
 from experiments.common.data_loader import load_config, load_data
 from experiments.common.preprocessing import features, preprocessor
 from experiments.common.result_saver import new_run, metadata, save_json
-from experiments.common.evaluation import figure, plt
+from experiments.common.visualization import figure, plt
 from experiments.kmeans.explain_results import write_explanation
 
 def main():
+    """Fit and select an independent behavioral K-Means segmentation.
+
+    Args:
+        None: CLI --config defaults to config.json beside this module.
+
+    Returns:
+        None: Prints the generated artifact directory or report; command-line side effects described below.
+
+    Processing:
+        Load/standardize all customer inputs; fit configured K range with fixed seeds; maximize eligible silhouette; save model, profiles, assignments, charts and explanation.
+
+    Raises:
+        Exception: Errors propagate after failed metadata and traceback are saved. Writes a new run. Response is attached after fitting and K selection.
+    """
     parser=argparse.ArgumentParser()
     parser.add_argument('--config',default=str(Path(__file__).with_name('config.json')))
     args=parser.parse_args()

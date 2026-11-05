@@ -2,18 +2,34 @@ import argparse
 import json
 from pathlib import Path
 import pandas as pd
-from experiments.common.result_saver import ROOT, new_run, save_json
-from experiments.common.evaluation import plt, figure
+from experiments.common.result_saver import new_run, save_json
+from experiments.common.visualization import figure
+from experiments.common.artifacts import latest
+from experiments.common.settings import MODELS
+from experiments.common.evaluation import metrics
 
-MODELS=['logistic_regression','decision_tree','random_forest','gradient_boosting']
 
 def main():
+    """Compare compatible completed classifier runs without training.
+
+    Args:
+        None: CLI --runs optionally accepts four run directories in LR, DT, RF, GB order; default newest completed per model.
+
+    Returns:
+        None: Prints the generated artifact directory or report; command-line side effects described below.
+
+    Processing:
+        Validate common metadata; recompute test metrics from saved probabilities; rank by CV F1; export CSV/chart/interpretation in a new comparison run.
+
+    Raises:
+        ValueError: If runs are absent or incompatible. OSError: For artifact failures. Creates a new comparison directory, never modifies training runs.
+    """
     parser=argparse.ArgumentParser()
     parser.add_argument('--runs',nargs=4,help='Explicit run directories in LR, DT, RF, GB order; otherwise latest completed per model')
     args=parser.parse_args()
     runs=[]
     for i,name in enumerate(MODELS):
-        candidates=[Path(args.runs[i])] if args.runs else sorted((ROOT/'outputs'/name).glob('run_*'),reverse=True)
+        candidates=[Path(args.runs[i])] if args.runs else [latest(name)]
         complete=[p for p in candidates if (p/'run_metadata.json').exists() and json.loads((p/'run_metadata.json').read_text()).get('status')=='complete']
         if not complete:
             raise ValueError(f'No complete run for {name}')
@@ -26,10 +42,13 @@ def main():
     for name,p in zip(MODELS,runs):
         cv=json.loads((p/'cv_metrics.json').read_text())
         test=json.loads((p/'test_metrics.json').read_text())
+        predictions = pd.read_csv(p/'test_predictions.csv')
+        test['selected'] = metrics(predictions.true_label, predictions.predicted_probability, test['selected_threshold'])
+        test['default_threshold'] = metrics(predictions.true_label, predictions.predicted_probability)
         rows.append(dict(model=name,run=str(p),cv_f1=cv['mean']['f1'],cv_f1_std=cv['std']['f1'],
                          threshold=test['selected_threshold'],
-                         **{'test_default_'+k:v for k,v in test['default_threshold'].items() if k not in ('confusion_matrix','roc_auc')},
-                         **{'test_selected_'+k:v for k,v in test['selected'].items() if k not in ('confusion_matrix','roc_auc')}))
+                         **{'test_default_'+k:v for k,v in test['default_threshold'].items() if k != 'confusion_matrix'},
+                         **{'test_selected_'+k:v for k,v in test['selected'].items() if k != 'confusion_matrix'}))
     table=pd.DataFrame(rows).sort_values('cv_f1',ascending=False)
     out=new_run('comparison',dict(runs=[str(p) for p in runs]))
     table.to_csv(out/'model_comparison.csv',index=False)
